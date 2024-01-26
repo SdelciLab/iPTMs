@@ -1,0 +1,13 @@
+FileName,Condition,Replicate
+2021LA018_LOES_001_02_10pto.raw,IgG_cytosol,1
+2021LA018_LOES_002_02_10pto.raw,KRAS_cytosol,1
+2021LA018_LOES_003_02_10pto.raw,IgG_cytosol,2
+2021LA018_LOES_004_02_10pto.raw,KRAS_cytosol,2
+2021LA018_LOES_005_02_10pto.raw,IgG_cytosol,3
+2021LA018_LOES_006_02_10pto.raw,KRAS_cytosol,3
+2021LA018_LOES_007_02_10pto.raw,IgG_chromatin,4
+2021LA018_LOES_008_02_10pto.raw,KRAS_chromatin,4
+2021LA018_LOES_009_02_10pto.raw,IgG_chromatin,5
+2021LA018_LOES_010_02_10pto.raw,KRAS_chromatin,5
+2021LA018_LOES_011_02_10pto.raw,IgG_chromatin,6
+2021LA018_LOES_012_02_10pto.raw,KRAS_chromatin,6
