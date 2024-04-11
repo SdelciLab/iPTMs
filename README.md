@@ -1,5 +1,5 @@
 # iPTMs
-Workflow for open-search IP-MS,  data
+Workflow for open-search IP-MS,  data directly from Fragpipe open search are available in the release section of github
 
 ## Data
 Each of the analysis in the manuscript 'Peptidoform analysis of IP-MS data allows detection of differentially present bait proteoforms' (HRAS, KRAS, BRD4) involves raw PSM output from MSFragger Open Search (present in releases) searched with a fasta file (in releases).
