@@ -94,6 +94,11 @@ plot_coverage_prot <- function(Uniprot_tmp,mapping, isoform_fasta){
 isoforms = HRAS_psms[Gene=='HRAS',Protein] |> 
     unlist() |> stringr::str_extract('\\|[:print:]*?\\|') |> stringr::str_remove_all('\\|') |> unique()
 dt = plot_coverage_prot('P01112',psm_percolator,isoform_fasta)
+HRAS_peptidoforms = HRAS_psms[`Protein ID` %in% isoforms][,.(Peptide,`Delta Mass`)]
+HRAS_peptidoforms[, mass_shift :=round(`Delta Mass`,digits = 1)]
+HRAS_peptidoforms = HRAS_peptidoforms[!between(mass_shift,-0.5,2)][,.(N_pepts=.N), by = .(Peptide,mass_shift)
+                                      ][N_pepts>1][,.(N_variation = .N), by = Peptide]
+fwrite(HRAS_peptidoforms, here::here('Datasets','Processed','HRAS_peptidoforms.csv'))
 HRAS_pepts = HRAS_psms[`Protein ID` %in% isoforms][,.(Peptide,`Delta Mass`,sample_name)]
 HRAS_pepts[,`Delta Mass`:=round(`Delta Mass`,digits = 1)]
 HRAS_pepts[,Mod_pept:= paste(Peptide,`Delta Mass`,sep = '_')]
@@ -215,6 +220,7 @@ for(i in unique(coln_annot$Cell_line)){
 result_files =  list.files(location, pattern = 'saints_results') |>
     stringr::str_subset('forw')  |> 
     str_subset('HET|CAL|SCC')
+significant_peptides = data.table()
 for(file_n in result_files){
     cell_line = str_remove(file_n,'_[:print:]*$')
     cell_line_position = glue::glue('{cell_line}_position')
@@ -227,6 +233,7 @@ for(file_n in result_files){
     second_bait = baits[2]
     proteoforms[,mut_pept:= stringr::str_detect(Prey,'LVVVGAGG')]
     proteoforms[,LogFC:= fifelse(Bait !=first_bait,LogFC*(-1),LogFC)]
+    significant_peptides = rbind(significant_peptides,proteoforms[BFDR <0.01][,comparison:=cell_line])
     max_show = proteoforms$LogFC |> abs() |> sort() |> tail(8) |> min()
     peptides_mod = proteoforms[,.(LogFC,BFDR,Prey)] |> unique()
     peptides_mod[,peptide:=str_remove(Prey,'_[:print:]*$')]
@@ -258,4 +265,4 @@ for(file_n in result_files){
     list_figures[[cell_line]] = p
 }
 
-
+fwrite(significant_peptides,here::here('Datasets','Processed','HRAS_study_significant_SAINTSexpress.csv'))

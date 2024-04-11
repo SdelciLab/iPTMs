@@ -98,6 +98,13 @@ isoforms = BRD4_psms[Gene=='BRD4',Protein] |>
     unlist() |> stringr::str_extract('\\|[:print:]*?\\|') |> stringr::str_remove_all('\\|') |> unique()
 
 dt = plot_coverage_prot('O60885',psm_percolator,isoform_fasta)
+BRD4_peptidoforms = BRD4_psms[`Protein ID` %in% isoforms][,.(Peptide,`Delta Mass`)]
+BRD4_peptidoforms[, mass_shift :=round(`Delta Mass`,digits = 1)]
+BRD4_peptidoforms = BRD4_peptidoforms[!between(mass_shift,-0.5,2)][,.(N_pepts=.N), by = .(Peptide,mass_shift)
+][N_pepts>1][,.(N_variation = .N), by = Peptide]
+fwrite(BRD4_peptidoforms, here::here('Datasets','Processed','BRD4_peptidoforms'))
+
+
 BRD4_pepts = BRD4_psms[`Protein ID` %in% isoforms][,.(Peptide,`Delta Mass`,sample_name)]
 BRD4_pepts[,`Delta Mass`:=round(`Delta Mass`,digits = 1)]
 BRD4_pepts[,Mod_pept:= paste(Peptide,`Delta Mass`,sep = '_')]

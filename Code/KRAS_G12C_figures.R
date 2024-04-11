@@ -97,6 +97,13 @@ isoforms = KRAS_psms[Gene=='KRAS',Protein] |>
     unlist() |> stringr::str_extract('\\|[:print:]*?\\|') |> stringr::str_remove_all('\\|') |> unique()
 
 dt = plot_coverage_prot('P01116-2',psm_percolator,isoform_fasta)
+KRAS_peptidoforms = KRAS_psms[`Protein ID` %in% isoforms][,.(Peptide,`Delta Mass`)]
+KRAS_peptidoforms[, mass_shift :=round(`Delta Mass`,digits = 1)]
+KRAS_peptidoforms = KRAS_peptidoforms[!between(mass_shift,-0.5,2)][,.(N_pepts=.N), by = .(Peptide,mass_shift)
+][N_pepts>1][,.(N_variation = .N), by = Peptide]
+fwrite(KRAS_peptidoforms, here::here('Datasets','Processed','KRAS_peptidoforms'))
+
+
 KRAS_pepts = KRAS_psms[`Protein ID` %in% isoforms][,.(Peptide,`Delta Mass`,sample_name)]
 KRAS_pepts[,`Delta Mass`:=round(`Delta Mass`,digits = 1)]
 KRAS_pepts[,Mod_pept:= paste(Peptide,`Delta Mass`,sep = '_')]
